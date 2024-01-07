@@ -2,7 +2,7 @@
 #[macro_use]
 extern crate glium;
 
-use glium::{Surface, glutin::{event::{Event, WindowEvent, VirtualKeyCode, ElementState, MouseButton, MouseScrollDelta}, event_loop::{ControlFlow, EventLoop}, dpi::{PhysicalPosition, PhysicalSize, LogicalSize}, window::WindowBuilder, ContextBuilder}, VertexBuffer, IndexBuffer, index::PrimitiveType, Program, DrawParameters, Display, texture::SrgbTexture1d};
+use glium::{Surface, glutin::{event::{Event, WindowEvent, VirtualKeyCode, ElementState, MouseButton, MouseScrollDelta}, event_loop::{ControlFlow, EventLoop}, dpi::{PhysicalPosition, PhysicalSize, LogicalSize}, window::WindowBuilder, ContextBuilder}, VertexBuffer, IndexBuffer, index::PrimitiveType, Program, DrawParameters, Display, texture::{MipmapsOption, SrgbTexture1d, SrgbFormat}, uniforms::SamplerWrapFunction};
 
 
 
@@ -72,7 +72,7 @@ fn main() {
 		(0, 0, 0)
 	}).collect();
 	
-	let gradient_texture = SrgbTexture1d::new(&display, color_lut).unwrap();
+	let gradient_texture = SrgbTexture1d::with_format(&display, color_lut, SrgbFormat::U8U8U8, MipmapsOption::NoMipmap).unwrap();
 	
 	
 	
@@ -195,6 +195,8 @@ fn main() {
 			}
 			Event::RedrawRequested(_) => {
 				
+				let gradient_sampler = gradient_texture.sampled().wrap_function(SamplerWrapFunction::Repeat);
+				
 				let mut target = display.draw();
 				target.clear_color_and_depth((0.0, 0.0, 0.0, 1.0), 1.0);
 				
@@ -202,26 +204,26 @@ fn main() {
 					(false, false) => target.draw(&default_vertex_buffer, &default_index_buffer, &mandelbrot_single, &uniform! {
 						aspect_ratio: height as f32 / width as f32,
 						x: x as f32, y: y as f32, zoom: z as f32,
-						iterations: iterations, cycle_iters: cycle_iters, gradient: &gradient_texture
+						iterations: iterations, cycle_iters: cycle_iters, gradient: gradient_sampler
 					}, &DrawParameters::default()).unwrap(),
 					
 					(true, false) => target.draw(&default_vertex_buffer, &default_index_buffer, &mandelbrot_double, &uniform! {
 						aspect_ratio: height as f32 / width as f32,
 						x: x, y: y, zoom: z,
-						iterations: iterations, cycle_iters: cycle_iters, gradient: &gradient_texture
+						iterations: iterations, cycle_iters: cycle_iters, gradient: gradient_sampler
 					}, &DrawParameters::default()).unwrap(),
 					
 					(false, true) => target.draw(&default_vertex_buffer, &default_index_buffer, &julia_single, &uniform! {
 						aspect_ratio: height as f32 / width as f32,
 						x: x as f32, y: y as f32, zoom: z as f32,
-						iterations: iterations, cycle_iters: cycle_iters, gradient: &gradient_texture,
+						iterations: iterations, cycle_iters: cycle_iters, gradient: gradient_sampler,
 						cx: mx as f32, cy: my as f32
 					}, &DrawParameters::default()).unwrap(),
 					
 					(true, true) => target.draw(&default_vertex_buffer, &default_index_buffer, &julia_double, &uniform! {
 						aspect_ratio: height as f32 / width as f32,
 						x: x, y: y, zoom: z,
-						iterations: iterations, cycle_iters: cycle_iters, gradient: &gradient_texture,
+						iterations: iterations, cycle_iters: cycle_iters, gradient: gradient_sampler,
 						cx: mx, cy: my
 					}, &DrawParameters::default()).unwrap(),
 				}

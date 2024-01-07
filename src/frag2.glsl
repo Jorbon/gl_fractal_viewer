@@ -23,7 +23,7 @@ void main() {
 		count += 1;
 		
 		if (dot(z, z) >= 4) {
-			t = clamp(float(count % cycle_iters) / cycle_iters, 0, 1);
+			t = float(count) / cycle_iters;
 			color = texture(gradient, t);
 			break;
 		} else if (count >= iterations) {
