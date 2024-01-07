@@ -120,6 +120,12 @@ fn main() {
 							VirtualKeyCode::Key2 => iterations = 500,
 							VirtualKeyCode::Key3 => iterations = 1000,
 							VirtualKeyCode::Key4 => iterations = 2000,
+							VirtualKeyCode::Key5 => iterations = 4000,
+							VirtualKeyCode::Key6 => iterations = 8000,
+							VirtualKeyCode::Key7 => iterations = 16000,
+							VirtualKeyCode::Key8 => iterations = 32000,
+							VirtualKeyCode::Key9 => iterations = 64000,
+							VirtualKeyCode::Key0 => iterations = 128000,
 							
 							VirtualKeyCode::Comma => double_precision = false,
 							VirtualKeyCode::Period => double_precision = true,
