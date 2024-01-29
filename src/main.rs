@@ -1,7 +1,5 @@
-
 #[macro_use]
 extern crate glium;
-
 use glium::{Surface, glutin::{event::{Event, WindowEvent, VirtualKeyCode, ElementState, MouseButton, MouseScrollDelta}, event_loop::{ControlFlow, EventLoop}, dpi::{PhysicalPosition, PhysicalSize, LogicalSize}, window::WindowBuilder, ContextBuilder}, VertexBuffer, IndexBuffer, index::PrimitiveType, Program, DrawParameters, Display, texture::{MipmapsOption, SrgbTexture1d, SrgbFormat}, uniforms::SamplerWrapFunction};
 
 
@@ -33,10 +31,10 @@ fn main() {
 		}
 	";
 	
-	let mandelbrot_single = Program::from_source(&display, &default_vertex_shader, include_str!("frag1.glsl"), None).unwrap();
-	let mandelbrot_double = Program::from_source(&display, &default_vertex_shader, include_str!("frag2.glsl"), None).unwrap();
-	let julia_single = Program::from_source(&display, &default_vertex_shader, include_str!("frag3.glsl"), None).unwrap();
-	let julia_double = Program::from_source(&display, &default_vertex_shader, include_str!("frag4.glsl"), None).unwrap();
+	let mandelbrot_single = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/mandelbrot_single.frag"), None).unwrap();
+	let mandelbrot_double = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/mandelbrot_double.frag"), None).unwrap();
+	let julia_single = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/julia_single.frag"), None).unwrap();
+	let julia_double = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/julia_double.frag"), None).unwrap();
 	
 	let default_vertex_buffer = VertexBuffer::new(&display, &[Vec2::new(-1.0, -1.0), Vec2::new(1.0, -1.0), Vec2::new(1.0, 1.0), Vec2::new(-1.0, 1.0)]).unwrap();
 	let default_index_buffer = IndexBuffer::new(&display, PrimitiveType::TrianglesList, &[0u16, 1, 2, 0, 2, 3]).unwrap();
