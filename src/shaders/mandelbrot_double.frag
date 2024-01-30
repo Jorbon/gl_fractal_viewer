@@ -1,6 +1,6 @@
 #version 400
 
-in vec2 pos;
+in vec2 screen_position;
 out vec4 color;
 
 uniform float aspect_ratio;
@@ -14,7 +14,7 @@ uniform sampler1D gradient;
 
 void main() {
 	
-	dvec2 c = dvec2(pos.x - 0.5, (pos.y - 0.5) * aspect_ratio) * zoom + dvec2(x, y);
+	dvec2 c = dvec2(screen_position.x - 0.5, (screen_position.y - 0.5) * aspect_ratio) * zoom + dvec2(x, y);
 	dvec2 z = c;
 	int count = 0;
 	float t;

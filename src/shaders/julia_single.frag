@@ -1,6 +1,6 @@
 #version 400
 
-in vec2 pos;
+in vec2 screen_position;
 out vec4 color;
 
 uniform float aspect_ratio;
@@ -18,7 +18,7 @@ uniform float cy;
 void main() {
 	
 	vec2 c = vec2(cx, cy);
-	vec2 z = vec2(pos.x - 0.5, (pos.y - 0.5) * aspect_ratio) * zoom + vec2(x, y);
+	vec2 z = vec2(screen_position.x - 0.5, (screen_position.y - 0.5) * aspect_ratio) * zoom + vec2(x, y);
 	int count = 0;
 	float t;
 	while (0 == 0) {

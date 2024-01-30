@@ -1,16 +1,27 @@
 #[macro_use]
 extern crate glium;
-use glium::{Surface, glutin::{event::{Event, WindowEvent, VirtualKeyCode, ElementState, MouseButton, MouseScrollDelta}, event_loop::{ControlFlow, EventLoop}, dpi::{PhysicalPosition, PhysicalSize, LogicalSize}, window::WindowBuilder, ContextBuilder}, VertexBuffer, IndexBuffer, index::PrimitiveType, Program, DrawParameters, Display, texture::{MipmapsOption, SrgbTexture1d, SrgbFormat}, uniforms::SamplerWrapFunction};
+use glium::{glutin::{event::{Event, WindowEvent, VirtualKeyCode, ElementState, MouseButton, MouseScrollDelta}, event_loop::{ControlFlow, EventLoop}, dpi::{PhysicalPosition, PhysicalSize, LogicalSize}, window::WindowBuilder, ContextBuilder}, index::PrimitiveType, texture::{MipmapsOption, SrgbTexture1d, SrgbFormat}, uniforms::SamplerWrapFunction, vertex::Attribute, Display, DrawParameters, IndexBuffer, Program, Surface, Vertex, VertexBuffer, VertexFormat};
 
 
 
-#[derive(Copy, Clone)]
-pub struct Vec2 { pub p: [f32; 2] }
-impl Vec2 {
-	pub fn new(x: f32, y: f32) -> Self { Self { p: [x, y] }}
+#[derive(Copy, Clone, Debug, Default)]
+pub struct Vec2(pub f32, pub f32);
+impl Vertex for Vec2 {
+	fn build_bindings() -> VertexFormat {
+		std::borrow::Cow::Owned(vec![(std::borrow::Cow::Borrowed("position"), 0, -1, <(f32, f32)>::get_type(), false)])
+	}
 }
-implement_vertex!(Vec2, p);
 
+static DEFAULT_VERTEX_SHADER: &str = "#version 150
+in vec2 position;
+out vec2 screen_position;
+void main() {
+	pos = (p + 1.0) * 0.5;
+	gl_Position = vec4(p, 0.0, 1.0);
+}";
+
+static DEFAULT_VERTICES: [Vec2; 4] = [Vec2(-1.0, -1.0), Vec2(1.0, -1.0), Vec2(1.0, 1.0), Vec2(-1.0, 1.0)];
+static DEFAULT_INDICES: [u16; 6] = [0, 1, 2, 0, 2, 3];
 
 
 fn main() {
@@ -20,24 +31,13 @@ fn main() {
 	let display = Display::new(wb, cb, &event_loop).unwrap();
 	let PhysicalSize { mut width, mut height } = display.gl_window().window().inner_size();
 	
+	let mandelbrot_single = Program::from_source(&display, DEFAULT_VERTEX_SHADER, include_str!("shaders/mandelbrot_single.frag"), None).unwrap();
+	let mandelbrot_double = Program::from_source(&display, DEFAULT_VERTEX_SHADER, include_str!("shaders/mandelbrot_double.frag"), None).unwrap();
+	let julia_single = Program::from_source(&display, DEFAULT_VERTEX_SHADER, include_str!("shaders/julia_single.frag"), None).unwrap();
+	let julia_double = Program::from_source(&display, DEFAULT_VERTEX_SHADER, include_str!("shaders/julia_double.frag"), None).unwrap();
 	
-	let default_vertex_shader = "
-		#version 150
-		in vec2 p;
-		out vec2 pos;
-		void main() {
-			pos = (p + 1.0) * 0.5;
-			gl_Position = vec4(p, 0.0, 1.0);
-		}
-	";
-	
-	let mandelbrot_single = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/mandelbrot_single.frag"), None).unwrap();
-	let mandelbrot_double = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/mandelbrot_double.frag"), None).unwrap();
-	let julia_single = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/julia_single.frag"), None).unwrap();
-	let julia_double = Program::from_source(&display, &default_vertex_shader, include_str!("shaders/julia_double.frag"), None).unwrap();
-	
-	let default_vertex_buffer = VertexBuffer::new(&display, &[Vec2::new(-1.0, -1.0), Vec2::new(1.0, -1.0), Vec2::new(1.0, 1.0), Vec2::new(-1.0, 1.0)]).unwrap();
-	let default_index_buffer = IndexBuffer::new(&display, PrimitiveType::TrianglesList, &[0u16, 1, 2, 0, 2, 3]).unwrap();
+	let default_vertex_buffer = VertexBuffer::new(&display, &DEFAULT_VERTICES).unwrap();
+	let default_index_buffer = IndexBuffer::new(&display, PrimitiveType::TrianglesList, &DEFAULT_INDICES).unwrap();
 	
 	
 	//let mut main_texture = SrgbTexture2d::empty(&display, width, height).unwrap();
