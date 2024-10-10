@@ -1,6 +1,5 @@
-#[macro_use]
 extern crate glium;
-use glium::{glutin::{event::{Event, WindowEvent, VirtualKeyCode, ElementState, MouseButton, MouseScrollDelta}, event_loop::{ControlFlow, EventLoop}, dpi::{PhysicalPosition, PhysicalSize, LogicalSize}, window::WindowBuilder, ContextBuilder}, index::PrimitiveType, texture::{MipmapsOption, SrgbTexture1d, SrgbFormat}, uniforms::SamplerWrapFunction, vertex::Attribute, Display, DrawParameters, IndexBuffer, Program, Surface, Vertex, VertexBuffer, VertexFormat};
+use glium::{glutin::{event::{Event, WindowEvent, VirtualKeyCode, ElementState, MouseButton, MouseScrollDelta}, event_loop::{ControlFlow, EventLoop}, dpi::{PhysicalPosition, PhysicalSize, LogicalSize}, window::WindowBuilder, ContextBuilder}, index::PrimitiveType, texture::{MipmapsOption, SrgbTexture1d, SrgbFormat}, uniform, uniforms::SamplerWrapFunction, vertex::Attribute, Display, DrawParameters, IndexBuffer, Program, Surface, Vertex, VertexBuffer, VertexFormat};
 
 
 
@@ -16,8 +15,8 @@ static DEFAULT_VERTEX_SHADER: &str = "#version 150
 in vec2 position;
 out vec2 screen_position;
 void main() {
-	pos = (p + 1.0) * 0.5;
-	gl_Position = vec4(p, 0.0, 1.0);
+	screen_position = (position + 1.0) * 0.5;
+	gl_Position = vec4(position, 0.0, 1.0);
 }";
 
 static DEFAULT_VERTICES: [Vec2; 4] = [Vec2(-1.0, -1.0), Vec2(1.0, -1.0), Vec2(1.0, 1.0), Vec2(-1.0, 1.0)];
